@@ -1,0 +1,229 @@
+# Version: v1.0
+# Date: 2026-02-12
+# ==========================================================================
+# Starship Prompt Configuration
+# ~/.config/starship.toml
+# Works on macOS, Windows, Linux — same file everywhere
+# ==========================================================================
+
+# Timeout for commands that take too long
+command_timeout = 1000
+
+# Insert blank line between prompts for readability
+add_newline = true
+
+# Prompt format — each section is color-coded and distinct
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$aws\
+$nodejs\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Right-side prompt (time)
+right_format = """$time"""
+
+# --------------------------------------------------------------------------
+# PROMPT CHARACTER (the arrow you type after)
+# --------------------------------------------------------------------------
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold purple)"
+
+# --------------------------------------------------------------------------
+# DIRECTORY — distinct color, truncated smartly
+# --------------------------------------------------------------------------
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+style = "bold cyan"
+format = "[$path]($style)[$read_only]($read_only_style) "
+read_only = " 🔒"
+
+[directory.substitutions]
+"Documents" = "📄"
+"Downloads" = "📥"
+"Pictures" = "🖼️"
+"~" = "🏠"
+
+# --------------------------------------------------------------------------
+# GIT — branch and status with distinct colors
+# --------------------------------------------------------------------------
+[git_branch]
+format = "on [$symbol$branch(:$remote_branch)]($style) "
+symbol = " "
+style = "bold purple"
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = "bold yellow"
+conflicted = "⚔️ "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+untracked = "?${count} "
+stashed = "📦 "
+modified = "!${count} "
+staged = "+${count} "
+renamed = "»${count} "
+deleted = "✘${count} "
+
+# --------------------------------------------------------------------------
+# PYTHON — shows version and active venv (critical for your workflow)
+# --------------------------------------------------------------------------
+[python]
+format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = "🐍 "
+style = "bold yellow"
+pyenv_version_name = true
+
+# --------------------------------------------------------------------------
+# AWS — shows active profile and region (essential for multi-account work)
+# --------------------------------------------------------------------------
+[aws]
+format = 'on [$symbol($profile )(\[$region\] )]($style)'
+symbol = "☁️ "
+style = "bold #ff9900"
+# Uncomment to only show when AWS_PROFILE is set:
+# disabled = false
+
+[aws.region_aliases]
+us-east-1 = "use1"
+us-east-2 = "use2"
+us-west-1 = "usw1"
+us-west-2 = "usw2"
+eu-west-1 = "euw1"
+
+# --------------------------------------------------------------------------
+# USERNAME & HOSTNAME — stands out during SSH sessions
+# --------------------------------------------------------------------------
+[username]
+format = "[$user]($style)@"
+style_user = "bold green"
+style_root = "bold red"
+show_always = false        # only show in SSH sessions or as root
+
+[hostname]
+format = "[$hostname]($style) in "
+style = "bold green"
+ssh_only = true            # only show when SSH'd somewhere
+ssh_symbol = "🌐 "
+
+# --------------------------------------------------------------------------
+# DOCKER
+# --------------------------------------------------------------------------
+[docker_context]
+format = "via [$symbol$context]($style) "
+symbol = "🐳 "
+style = "bold blue"
+only_with_files = true
+
+# --------------------------------------------------------------------------
+# NODE.JS (for Cline / Claude Code tooling)
+# --------------------------------------------------------------------------
+[nodejs]
+format = "via [$symbol($version )]($style)"
+symbol = "⬢ "
+style = "bold green"
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
+
+# --------------------------------------------------------------------------
+# COMMAND DURATION — shows when commands take > 3 seconds
+# --------------------------------------------------------------------------
+[cmd_duration]
+min_time = 3000
+format = "took [$duration]($style) "
+style = "bold #f7768e"
+
+# --------------------------------------------------------------------------
+# TIME (right side)
+# --------------------------------------------------------------------------
+[time]
+disabled = false
+format = "[$time]($style)"
+style = "dimmed white"
+time_format = "%H:%M"
+
+# --------------------------------------------------------------------------
+# DISABLED MODULES (reduce noise)
+# --------------------------------------------------------------------------
+[package]
+disabled = true
+
+[terraform]
+disabled = true
+
+[vagrant]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[scala]
+disabled = true
+
+[java]
+disabled = true
+
+[ruby]
+disabled = true
+
+[lua]
+disabled = true
+
+[perl]
+disabled = true
+
+[php]
+disabled = true
+
+[swift]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[haskell]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[erlang]
+disabled = true
+
+[julia]
+disabled = true
+
+[zig]
+disabled = true
+
+[vlang]
+disabled = true
+
+[ocaml]
+disabled = true
+
+[nim]
+disabled = true
+
+[crystal]
+disabled = true
+
+[daml]
+disabled = true
+
+[dart]
+disabled = true
