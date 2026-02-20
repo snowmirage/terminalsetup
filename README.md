@@ -95,3 +95,35 @@ cd terminalsetup; git pull; .\deploy.ps1          # Windows
 See `setup-guide.md` for the full configuration reference, keybindings, workflow tips, and customization options.
 
 See `wezterm-cheatsheet.md` for a printable keybinding quick-reference.
+
+---
+
+## Known Issues
+
+### macOS Dictation (Voice-to-Text) Does Not Work in WezTerm
+
+macOS built-in Dictation does not activate in WezTerm regardless of which shortcut is configured (Fn key, Ctrl+H, etc.). This is a [known WezTerm bug](https://github.com/wezterm/wezterm/issues/5180), not a configuration issue.
+
+**Root cause:** macOS Dictation requires apps to implement the `NSTextInputClient` protocol and return a valid cursor position from `selectedRange()`. WezTerm returns `NSRange(NSNotFound, 0)`, which tells macOS there is no valid insertion point, so Dictation refuses to activate. The fix is a one-line change to return `NSRange(0, 0)` instead. This same bug previously affected Emacs, Kitty, and Ghostty — all have since fixed it.
+
+**Fix status:** [PR #7453](https://github.com/wezterm/wezterm/pull/7453) has the fix but has not been merged yet (as of February 2026).
+
+**Other terminals for comparison:**
+
+| Terminal | Dictation Works? |
+|---|---|
+| Terminal.app | Yes |
+| Ghostty | Yes (fixed) |
+| Kitty | Yes (fixed Jan 2026) |
+| iTerm2 | No |
+| Alacritty | No (wontfix) |
+| WezTerm | No (fix pending) |
+
+**Workarounds:**
+
+- **Third-party dictation tools** that bypass the native macOS system and inject text via simulated keystrokes:
+  - [Superwhisper](https://superwhisper.com/) — commercial, uses Whisper AI
+  - [OpenWhispr](https://github.com/OpenWhispr/openwhispr) — open source, recognizes 20+ terminals including WezTerm
+  - [stt](https://github.com/bokan/stt) — hold a key, speak, release, works system-wide
+- **Build WezTerm from source** with [PR #7453](https://github.com/wezterm/wezterm/pull/7453) applied
+- **Use Ghostty or Kitty** for dictation-heavy workflows — both have this fixed
