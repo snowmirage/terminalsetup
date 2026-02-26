@@ -44,6 +44,10 @@ function Check-Prerequisites {
     # PowerShell 7
     if ($PSVersionTable.PSVersion.Major -ge 7) {
         Write-Ok "PowerShell 7+ detected (v$($PSVersionTable.PSVersion))"
+    } elseif (Get-Command pwsh -ErrorAction SilentlyContinue) {
+        $pwshVer = (pwsh -NoProfile -Command '$PSVersionTable.PSVersion.ToString()') 2>$null
+        Write-Ok "PowerShell 7 is installed (v$pwshVer) but you're running this with PowerShell 5.1"
+        Write-Info "Tip: run this script with pwsh instead: pwsh -ExecutionPolicy Bypass -File .\deploy.ps1"
     } else {
         Write-Warn "Running Windows PowerShell $($PSVersionTable.PSVersion)"
         Write-Info "PowerShell 7 is recommended for best experience"

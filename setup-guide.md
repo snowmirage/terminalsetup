@@ -40,7 +40,7 @@ Optimized for: SSH • WezTerm • Starship prompt
 ### What You Get
 
 - GPU-accelerated terminal with 100,000-line scrollback
-- Tmux-style pane/tab multiplexer with Leader key (Ctrl+\) — no need for tmux
+- Tmux-style pane/tab multiplexer with Leader key (Cmd+Space on macOS / Ctrl+Space on Windows) — no need for tmux
 - Color-coded prompt: directory, git status, Python venv, AWS profile, command duration
 - Syntax highlighting as you type (valid = green, invalid = red)
 - Gray autosuggestions from history (press → to accept)
@@ -58,20 +58,15 @@ Optimized for: SSH • WezTerm • Starship prompt
 
 ### Keyboard Remap Note
 
-This config assumes the following macOS keyboard remap (to match Windows physical key positions):
+I've rebound the following keys on macOS so the physical keyboard matches Windows:
 
-| Physical Key | macOS Signal | Why |
-|-------------|-------------|-----|
-| Ctrl | Cmd (Super) | Makes Ctrl+C/V copy/paste match Windows |
-| Windows/Globe | Ctrl | Ctrl signal for terminal shortcuts |
-| Alt | Option | Standard Option key behavior |
+| Physical Key | macOS Signal |
+|-------------|-------------|
+| Ctrl | Cmd |
+| Windows/Globe | Ctrl |
+| Alt | Option |
 
-This means:
-- **Copy/paste**: same physical keys on both platforms (physical Ctrl+C/V)
-- **Leader key (Ctrl+\)**: press physical **Windows/Globe + A** on Mac, physical **Ctrl + A** on Windows
-- **Cmd+Shift+P (command palette)**: press physical **Ctrl + Shift + P** on Mac
-
-If you don't use this remap, everything still works — you'd just use the standard Mac key positions.
+This means copy/paste, the leader key, and all shortcuts are the same physical keys on both platforms. If you don't use this remap, everything still works — just use the standard Mac key positions.
 
 ### Prerequisites
 
@@ -88,7 +83,7 @@ brew install --cask wezterm
 ### Step 2: Install Dependencies
 
 ```bash
-brew install starship zsh-syntax-highlighting zsh-autosuggestions
+brew install starship zsh-syntax-highlighting zsh-autosuggestions pngpaste
 brew install --cask font-jetbrains-mono-nerd-font
 ```
 
@@ -231,6 +226,12 @@ Install zsh plugins:
 sudo apt install -y zsh-syntax-highlighting zsh-autosuggestions
 ```
 
+For native Linux (not WSL), install `xclip` for image clipboard paste support:
+
+```bash
+sudo apt install -y xclip
+```
+
 > **Note on fonts:** WSL uses the Windows-installed fonts. If you already installed JetBrainsMono Nerd Font on Windows (Step 4 above), no additional font install is needed.
 
 ### Step 3: Set zsh as Default Shell
@@ -299,7 +300,7 @@ Location: `~/.config/wezterm/wezterm.lua` | Language: Lua | Hot-reloads on save
 | Window Settings | Integrated title bar buttons (Mac), 140x40 initial size, subtle transparency on Mac |
 | Tab Bar | Fancy tab bar showing process name per tab, numbered tabs |
 | Status Bar | Right-side status: current directory, hostname (for SSH), time |
-| Leader Key | Ctrl+\ prefix (2-second timeout) for all pane/tab operations |
+| Leader Key | Ctrl+Space prefix (2-second timeout) for all pane/tab operations |
 | Keybindings | Pane splits, navigation (vim + arrows), resize mode, tab switching, copy mode, search, workspaces |
 | Mouse Bindings | Ctrl+Click URLs, triple-click semantic zones, right-click copy |
 | Launch Menu | Platform-specific shells (pwsh, cmd, Git Bash, WSL on Windows; zsh, bash on Mac) |
@@ -341,29 +342,31 @@ Location: `~/.config/starship.toml` (works on all platforms)
 
 ## 6. Keybinding Reference
 
-Leader key: **Ctrl+\\** (press and release, then press the action key within 2 seconds)
+Leader key: **Cmd+Space** (macOS) / **Ctrl+Space** (Windows/Linux)
+Press and release, then press the action key within 2 seconds.
+> On macOS with the keyboard remap (physical Ctrl→Cmd), it's the same physical key on both platforms. Tables below show the Windows/Linux modifier.
 
 ### Pane Management
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+\ \|` | Split pane horizontally (side by side) |
-| `Ctrl+\ -` | Split pane vertically (top/bottom) |
-| `Ctrl+\ x` | Close current pane |
-| `Ctrl+\ h/j/k/l` | Navigate panes (vim-style) |
-| `Ctrl+\ ←↓↑→` | Navigate panes (arrow keys) |
-| `Ctrl+\ z` | Toggle zoom (maximize/restore pane) |
-| `Ctrl+\ r` | Enter resize mode (h/j/k/l, Esc to exit) |
-| `Ctrl+\ ]` | Rotate panes clockwise |
+| `Ctrl+Space \|` | Split pane horizontally (side by side) |
+| `Ctrl+Space -` | Split pane vertically (top/bottom) |
+| `Ctrl+Space x` | Close current pane |
+| `Ctrl+Space h/j/k/l` | Navigate panes (vim-style) |
+| `Ctrl+Space ←↓↑→` | Navigate panes (arrow keys) |
+| `Ctrl+Space z` | Toggle zoom (maximize/restore pane) |
+| `Ctrl+Space r` | Enter resize mode (h/j/k/l, Esc to exit) |
+| `Ctrl+Space ]` | Rotate panes clockwise |
 
 ### Tab Management
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+\ c` | New tab |
-| `Ctrl+\ n / p` | Next / previous tab |
-| `Ctrl+\ 1-9` | Jump to tab by number |
-| `Ctrl+\ &` | Close tab (with confirmation) |
+| `Ctrl+Space c` | New tab |
+| `Ctrl+Space n / p` | Next / previous tab |
+| `Ctrl+Space 1-9` | Jump to tab by number |
+| `Ctrl+Space &` | Close tab (with confirmation) |
 
 ### Platform Shortcuts (same physical key on both platforms)
 
@@ -382,12 +385,13 @@ With the macOS keyboard remap (physical Ctrl → Cmd), these use the **same phys
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+\ Space` | Quick Select (grab IPs, ARNs, hashes, paths) |
-| `Ctrl+\ [` | Copy mode (vim-style selection) |
-| `Ctrl+\ s` | List workspaces |
-| `Ctrl+\ w` | Fuzzy-find workspaces |
-| `Ctrl+\ Shift+S` | SSH domain launcher |
-| `Ctrl+\ Shift+R` | Force reload config |
+| `Ctrl+Space Space` | Quick Select (grab IPs, ARNs, hashes, paths) |
+| `Ctrl+Space [` | Copy mode (vim-style selection) |
+| `Ctrl+Space s` | List workspaces |
+| `Ctrl+Space w` | Fuzzy-find workspaces |
+| `Ctrl+Space Shift+S` | SSH domain launcher |
+| `Ctrl+Space Shift+R` | Force reload config |
+| `Ctrl+Alt+V` / `Cmd+Alt+V` | Paste clipboard image as file path |
 | `Ctrl+Click` | Open URL in browser |
 | `Triple-click` | Select single command's output block |
 
@@ -397,7 +401,7 @@ With the macOS keyboard remap (physical Ctrl → Cmd), these use the **same phys
 
 ### SSH
 
-- **Ctrl+\ Shift+S** fuzzy-searches and connects to SSH hosts from known_hosts
+- **Ctrl+Space Shift+S** fuzzy-searches and connects to SSH hosts from known_hosts
 - Add frequent hosts to `ssh_domains` in wezterm.lua for one-click connections
 - Starship shows username@hostname in green during SSH sessions
 - Status bar shows remote hostname on the right
@@ -504,6 +508,16 @@ config.ssh_domains = {
 config.default_prog = { "wsl.exe", "-d", "Ubuntu-24.04", "--cd", "~" }
 ```
 
+### Image Paste (Ctrl+Alt+V)
+
+When you copy a screenshot to your clipboard (e.g., Win+Shift+S on Windows, Cmd+Shift+4 on macOS), pressing **Ctrl+Alt+V** (or **Cmd+Alt+V** on macOS) saves the clipboard image to a temp file and sends the file path to the terminal. This is useful for pasting screenshots into CLI tools that accept image file paths (e.g., Claude Code).
+
+- **Windows/WSL**: Uses PowerShell `Get-Clipboard -Format Image`. Auto-detects WSL panes and converts the path to `/mnt/c/...` format.
+- **macOS**: Uses `pngpaste` (install with `brew install pngpaste`).
+- **Linux**: Uses `wl-paste` (Wayland) or `xclip` (X11). Install with `sudo apt install xclip`.
+
+If no image is on the clipboard, falls back to normal text paste.
+
 ### Disable Transparency on Mac
 
 ```lua
@@ -518,7 +532,7 @@ config.window_background_opacity = 1.0  -- was 0.96
 
 - Verify file location: `~/.config/wezterm/wezterm.lua` (not `.config/wezterm.lua`)
 - Check for Lua syntax errors — WezTerm shows an error dialog on launch
-- Force reload: `Ctrl+\ Shift+R`
+- Force reload: `Cmd+Space Shift+R` (macOS) / `Ctrl+Space Shift+R` (Windows/Linux)
 
 ### Font icons showing as squares/boxes
 
@@ -544,10 +558,17 @@ config.window_background_opacity = 1.0  -- was 0.96
 - Open a new tab, run a few commands, then try triple-click
 - Won't work in SSH sessions unless the remote shell also has OSC 133 integration
 
-### Ctrl+\ conflict with shell "go to beginning of line"
+### Cmd+Space / Ctrl+Space conflict
 
-- Press Ctrl+\ twice quickly to send it to the shell
-- Or change the leader key in wezterm.lua:
+**macOS — Spotlight conflict:** Cmd+Space is Spotlight search by default. Disable it in System Settings → Keyboard → Shortcuts → Spotlight, or reassign Spotlight to a different key.
+
+**Zsh — set-mark-command conflict:** Ctrl+Space is `set-mark-command` in zsh's emacs mode. WezTerm intercepts it as the leader key before it reaches the shell, so this shouldn't be an issue. If you need `set-mark-command`, rebind it in your `.zshrc`:
+
+```zsh
+bindkey '^@' undefined-key   # free Ctrl+Space for WezTerm leader
+```
+
+To change the leader key entirely, edit `wezterm.lua`:
 
 ```lua
 config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 2000 }

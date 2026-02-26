@@ -22,6 +22,7 @@ local is_linux = wezterm.target_triple:find("linux") ~= nil
 local mod = {
   SUPER = is_macos and "SUPER" or "CTRL",
   SUPER_SHIFT = is_macos and "SUPER|SHIFT" or "CTRL|SHIFT",
+  SUPER_ALT = is_macos and "SUPER|ALT" or "CTRL|ALT",
 }
 
 -- ==========================================================================
@@ -37,13 +38,21 @@ config.animation_fps = 60
 -- ==========================================================================
 if is_windows then
   -- Use PowerShell 7 (pwsh) if available, fall back to Windows PowerShell
-  local pwsh_found = false
-  local success, stdout, stderr = wezterm.run_child_process({ "where.exe", "pwsh.exe" })
-  if success then
-    pwsh_found = true
+  -- Check known install paths as fallback since pwsh may not be on WezTerm's PATH at launch
+  local pwsh_path = nil
+  local success, stdout = wezterm.run_child_process({ "where.exe", "pwsh.exe" })
+  if success and stdout and stdout:match("pwsh") then
+    pwsh_path = "pwsh.exe"
+  else
+    local known = "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+    local f = io.open(known, "r")
+    if f then
+      f:close()
+      pwsh_path = known
+    end
   end
-  if pwsh_found then
-    config.default_prog = { "pwsh.exe", "-NoLogo" }
+  if pwsh_path then
+    config.default_prog = { pwsh_path, "-NoLogo" }
   else
     config.default_prog = { "powershell.exe", "-NoLogo" }
   end
@@ -100,7 +109,7 @@ config.font = wezterm.font_with_fallback({
 config.font_size = is_macos and 14.0 or 11.0
 config.line_height = 1.1
 config.cell_width = 1.0
-config.freetype_load_flags = "NO_HINTING"
+config.freetype_load_flags = is_macos and "NO_HINTING" or "DEFAULT"
 config.warn_about_missing_glyphs = false
 
 -- ==========================================================================
@@ -157,6 +166,17 @@ end)
 wezterm.on("update-status", function(window, pane)
   local cells = {}
 
+  -- Leader key indicator
+  if window:leader_is_active() then
+    window:set_left_status(wezterm.format({
+      { Foreground = { Color = "#1a1b26" } },
+      { Background = { Color = "#e0af68" } },
+      { Text = " LEADER " },
+    }))
+  else
+    window:set_left_status("")
+  end
+
   -- Current working directory
   local cwd_uri = pane:get_current_working_dir()
   if cwd_uri then
@@ -199,12 +219,14 @@ config.enable_scroll_bar = false
 -- ==========================================================================
 -- LEADER KEY (tmux-style multiplexer)
 -- ==========================================================================
--- Leader: physical Ctrl+\ on both platforms (unused by anything else)
---   macOS:   Cmd+\  (physical Ctrl+\ because Ctrl is remapped to Cmd)
---   Windows: Ctrl+\ (physical Ctrl+\ standard)
+-- Leader: physical Ctrl+Space on both platforms
+--   macOS:   Cmd+Space (physical Ctrl+Space because Ctrl is remapped to Cmd)
+--   Windows: Ctrl+Space
 -- Press Leader, release, then press action key within 2 seconds.
+-- Note: On macOS, you may need to disable Spotlight's Cmd+Space shortcut
+-- (System Settings → Keyboard → Shortcuts → Spotlight).
 config.leader = {
-  key = "\\",
+  key = "Space",
   mods = is_macos and "SUPER" or "CTRL",
   timeout_milliseconds = 2000,
 }
@@ -274,6 +296,97 @@ config.keys = {
   -- Smart Paste: on Windows Ctrl+V needs to paste instead of sending literal ^V
   { key = "v", mods = mod.SUPER, action = act.PasteFrom("Clipboard") },
 
+  -- Image Paste: saves clipboard image to a temp file and sends the path
+  -- Useful for pasting screenshots into CLI tools that accept image file paths
+  { key = "v", mods = mod.SUPER_ALT, action = wezterm.action_callback(function(window, pane)
+    local timestamp = os.time()
+
+    if is_windows then
+      local tmp = os.getenv("TEMP") or "C:\\Temp"
+      local filename = "clip_" .. timestamp .. ".png"
+      local filepath = tmp .. "\\" .. filename
+      local ps_script = string.format(
+        [[$img = Get-Clipboard -Format Image; if ($img) { $img.Save('%s'); Write-Output 'OK' } else { Write-Output 'NO_IMAGE' }]],
+        filepath
+      )
+      local success, stdout = wezterm.run_child_process({
+        "powershell.exe", "-NoProfile", "-Command", ps_script,
+      })
+      if success and stdout and stdout:match("OK") then
+        -- Detect WSL pane: check CWD (Unix path = WSL), fall back to process name
+        local is_wsl_pane = false
+        local cwd_uri = pane:get_current_working_dir()
+        if cwd_uri then
+          local cwd_path = cwd_uri.file_path or ""
+          is_wsl_pane = cwd_path:sub(1, 1) == "/"
+        end
+        if not is_wsl_pane then
+          local proc = pane:get_foreground_process_name() or ""
+          is_wsl_pane = proc:sub(1, 1) == "/" or proc:lower():find("wsl") ~= nil
+        end
+        if is_wsl_pane then
+          -- Convert Windows path to WSL: C:\...\file -> /mnt/c/.../file
+          local wsl_path = filepath:gsub("\\", "/")
+          wsl_path = wsl_path:gsub("^(%a):", function(drive)
+            return "/mnt/" .. drive:lower()
+          end)
+          window:perform_action(act.SendString(wsl_path), pane)
+        else
+          window:perform_action(act.SendString(filepath), pane)
+        end
+      else
+        window:perform_action(act.PasteFrom("Clipboard"), pane)
+      end
+
+    elseif is_macos then
+      local filepath = "/tmp/clip_" .. timestamp .. ".png"
+      local success = wezterm.run_child_process({ "pngpaste", filepath })
+      if success then
+        window:perform_action(act.SendString(filepath), pane)
+      else
+        window:perform_action(act.PasteFrom("Clipboard"), pane)
+      end
+
+    else -- Linux
+      local filepath = "/tmp/clip_" .. timestamp .. ".png"
+      local saved = false
+      -- Try wl-paste (Wayland) first, then xclip (X11)
+      if os.getenv("WAYLAND_DISPLAY") then
+        local ok = wezterm.run_child_process({
+          "bash", "-c",
+          string.format("wl-paste --type image/png > '%s' 2>/dev/null", filepath),
+        })
+        if ok then saved = true end
+      end
+      if not saved then
+        local ok = wezterm.run_child_process({
+          "bash", "-c",
+          string.format("xclip -selection clipboard -t image/png -o > '%s' 2>/dev/null", filepath),
+        })
+        if ok then saved = true end
+      end
+      -- Verify file has content (shell redirects create empty files on failure)
+      if saved then
+        local f = io.open(filepath, "r")
+        if f then
+          local size = f:seek("end")
+          f:close()
+          if not size or size == 0 then
+            os.remove(filepath)
+            saved = false
+          end
+        else
+          saved = false
+        end
+      end
+      if saved then
+        window:perform_action(act.SendString(filepath), pane)
+      else
+        window:perform_action(act.PasteFrom("Clipboard"), pane)
+      end
+    end
+  end) },
+
   -- Font size
   { key = "+", mods = mod.SUPER_SHIFT, action = act.IncreaseFontSize },
   { key = "-", mods = mod.SUPER,       action = act.DecreaseFontSize },
@@ -285,6 +398,9 @@ config.keys = {
 
   -- Command palette
   { key = "p", mods = mod.SUPER_SHIFT, action = act.ActivateCommandPalette },
+
+  -- Shift+Enter sends distinct sequence for multi-line input in CLI tools
+  { key = "Enter", mods = "SHIFT", action = act.SendString("\x1b[13;2u") },
 
   -- ===== Workspaces (session management - like tmux sessions) =====
   { key = "s", mods = "LEADER", action = act.ShowLauncherArgs({ flags = "WORKSPACES" }) },
@@ -362,7 +478,7 @@ if is_windows then
     { label = "  Windows PowerShell", args = { "powershell.exe", "-NoLogo" } },
     { label = "  Command Prompt", args = { "cmd.exe" } },
     { label = "  Git Bash",       args = { "C:\\Program Files\\Git\\bin\\bash.exe", "-l" } },
-    { label = "  WSL (Ubuntu)",   args = { "wsl.exe", "-d", "Ubuntu-24.04" } },
+    { label = "  WSL (Ubuntu)",   args = { "wsl.exe", "-d", "Ubuntu-24.04", "--cd", "~" } },
   }
 elseif is_macos then
   launch_menu = {

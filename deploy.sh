@@ -147,6 +147,18 @@ check_prerequisites_macos() {
     success "zsh-autosuggestions is installed"
   fi
 
+  # pngpaste (for image clipboard paste in WezTerm)
+  if ! check_command pngpaste; then
+    warn "pngpaste is not installed (needed for Ctrl+Alt+V image paste)"
+    if prompt_yn "Install pngpaste via Homebrew?"; then
+      brew install pngpaste
+    else
+      info "Install later with: brew install pngpaste"
+    fi
+  else
+    success "pngpaste is installed"
+  fi
+
   # Nerd Font
   echo ""
   info "JetBrainsMono Nerd Font is required for icons."
@@ -227,6 +239,18 @@ check_prerequisites_linux() {
     fi
   else
     success "zsh-autosuggestions is installed"
+  fi
+
+  # xclip (for image clipboard paste in WezTerm — not needed on WSL)
+  if ! $IS_WSL; then
+    if ! check_command xclip; then
+      warn "xclip is not installed (needed for Ctrl+Alt+V image paste)"
+      if prompt_yn "Install xclip via apt?"; then
+        sudo apt install -y xclip
+      fi
+    else
+      success "xclip is installed"
+    fi
   fi
 
   # Font reminder

@@ -87,7 +87,7 @@ cd terminalsetup; git pull; .\deploy.ps1          # Windows
 
 ## Key Features
 
-- **WezTerm** — GPU-accelerated terminal with 100k-line scrollback, tmux-style pane splitting (Leader: `Ctrl+\`), workspaces, Quick Select for IPs/ARNs/hashes, and auto light/dark theme switching
+- **WezTerm** — GPU-accelerated terminal with 100k-line scrollback, tmux-style pane splitting (Leader: `Cmd+Space` on macOS / `Ctrl+Space` on Windows), workspaces, Quick Select for IPs/ARNs/hashes, and auto light/dark theme switching
 - **Starship** — Fast cross-platform prompt showing git branch/status, Python venv, AWS profile, Docker context, command duration, and more
 - **Zsh** (macOS/Linux/WSL) — 50k-line shared history, case-insensitive completion, syntax highlighting, autosuggestions, OSC 133 semantic zones (triple-click selects command output)
 - **PowerShell** (Windows) — Starship prompt with PSReadLine history-based autocomplete

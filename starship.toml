@@ -8,12 +8,15 @@
 
 # Timeout for commands that take too long
 command_timeout = 1000
+scan_timeout = 100
 
 # Insert blank line between prompts for readability
 add_newline = true
 
 # Prompt format — each section is color-coded and distinct
 format = """
+$os\
+${env_var.PS_VERSION}\
 $username\
 $hostname\
 $directory\
@@ -37,6 +40,26 @@ right_format = """$time"""
 success_symbol = "[❯](bold green)"
 error_symbol = "[❯](bold red)"
 vimcmd_symbol = "[❮](bold purple)"
+
+# --------------------------------------------------------------------------
+# OS INDICATOR — shows platform icon to distinguish shells at a glance
+# --------------------------------------------------------------------------
+[os]
+disabled = false
+style = "bold white"
+
+[os.symbols]
+Windows = ""
+Macos = "MAC "
+Linux = "WSL "
+Ubuntu = "WSL "
+
+# --------------------------------------------------------------------------
+# POWERSHELL VERSION — shows PS7 or PS5 (set by powershell_profile.ps1)
+# --------------------------------------------------------------------------
+[env_var.PS_VERSION]
+format = "[$env_value ]($style)"
+style = "bold white"
 
 # --------------------------------------------------------------------------
 # DIRECTORY — distinct color, truncated smartly

@@ -1,9 +1,10 @@
 # WezTerm Cheat Sheet
-## Leader key: Ctrl+\ (press then release, then press action key within 2 sec)
+## Leader key: Cmd+Space (macOS) / Ctrl+Space (Windows/Linux)
+## Press then release, then press action key within 2 sec
 
 > KEYBOARD NOTE (macOS remap): Physical Ctrl→Cmd, Windows/Globe→Ctrl, Alt→Option
 > This makes copy/paste the same physical keys on Mac and Windows.
-> Leader key (Ctrl+\): same physical key on both platforms.
+> Leader key: same physical key on both platforms (physical Ctrl+Space).
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -41,6 +42,7 @@
   Click and drag               Select text (auto-highlights)
   Double-click                 Select word
   Triple-click                 Select a single command's output (block)
+  Cmd+Alt+V / Ctrl+Alt+V      Paste clipboard image as file path
   Ctrl+Click on URL            Open link in browser
 
   **Command Blocks** (like Warp's blocks):
@@ -54,12 +56,12 @@
   that output — not ls or ps aux.
 
   **Copy Mode** (vim-style precise selection):
-  Ctrl+\ [         Enter copy mode
+  Ctrl+Space [         Enter copy mode
                     Then use vim keys: h/j/k/l to move,
                     v to start selection, y to copy, Esc to exit
 
   **Quick Select** (grab specific patterns from output):
-  Ctrl+\ Space     Highlights all IPs, ARNs, git hashes, UUIDs,
+  Ctrl+Space Space     Highlights all IPs, ARNs, git hashes, UUIDs,
                     file paths on screen. Press the letter shown
                     next to the one you want — it copies to clipboard.
 
@@ -67,39 +69,39 @@
 
 ## PANES
 
-  Ctrl+\ |         Split horizontally (left | right)
-  Ctrl+\ -         Split vertically (top / bottom)
-  Ctrl+\ x         Close current pane
-  Ctrl+\ z         Zoom pane (toggle fullscreen/restore)
+  Ctrl+Space |         Split horizontally (left | right)
+  Ctrl+Space -         Split vertically (top / bottom)
+  Ctrl+Space x         Close current pane
+  Ctrl+Space z         Zoom pane (toggle fullscreen/restore)
 
   Navigate between panes:
-  Ctrl+\ h          Move to left pane       (or ← arrow)
-  Ctrl+\ j          Move to pane below      (or ↓ arrow)
-  Ctrl+\ k          Move to pane above      (or ↑ arrow)
-  Ctrl+\ l          Move to right pane      (or → arrow)
+  Ctrl+Space h          Move to left pane       (or ← arrow)
+  Ctrl+Space j          Move to pane below      (or ↓ arrow)
+  Ctrl+Space k          Move to pane above      (or ↑ arrow)
+  Ctrl+Space l          Move to right pane      (or → arrow)
 
   Resize panes:
-  Ctrl+\ r          Enter resize mode
+  Ctrl+Space r          Enter resize mode
                      Then h/j/k/l to resize, Esc when done
 
-  Ctrl+\ ]          Rotate panes clockwise
+  Ctrl+Space ]          Rotate panes clockwise
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## TABS
 
-  Ctrl+\ c          New tab
-  Ctrl+\ n          Next tab
-  Ctrl+\ p          Previous tab
-  Ctrl+\ 1-9        Jump to tab by number
-  Ctrl+\ &          Close tab (with confirmation)
+  Ctrl+Space c          New tab
+  Ctrl+Space n          Next tab
+  Ctrl+Space p          Previous tab
+  Ctrl+Space 1-9        Jump to tab by number
+  Ctrl+Space &          Close tab (with confirmation)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## WORKSPACES
 
-  Ctrl+\ s          List all workspaces (switch between them)
-  Ctrl+\ w          Fuzzy-find workspaces
+  Ctrl+Space s          List all workspaces (switch between them)
+  Ctrl+Space w          Fuzzy-find workspaces
 
   Create a new workspace:
     Open command palette (Cmd+Shift+P / Alt+Shift+P)
@@ -113,7 +115,7 @@
 
 ## SSH
 
-  Ctrl+\ Shift+S    Fuzzy-search SSH hosts and connect
+  Ctrl+Space Shift+S    Fuzzy-search SSH hosts and connect
                      (reads from ~/.ssh/known_hosts and ssh_domains in config)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -127,21 +129,22 @@
   Cmd+F / Ctrl+F             Search scrollback
   Cmd+K / Ctrl+K             Clear scrollback
   Cmd+Shift+P / Ctrl+Shift+P  Command palette (search all actions)
+  Cmd+Alt+V / Ctrl+Alt+V        Paste clipboard image as file path
   Cmd++/-/0 / Ctrl++/-/0     Font size: bigger / smaller / reset
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## OTHER
 
-  Ctrl+\ Shift+R    Force reload config
-  Ctrl+\ [          Copy mode (vim selection)
-  Ctrl+\ Space      Quick Select (grab IPs, hashes, paths)
+  Ctrl+Space Shift+R    Force reload config
+  Ctrl+Space [          Copy mode (vim selection)
+  Ctrl+Space Space      Quick Select (grab IPs, hashes, paths)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## QUICK REFERENCE: LEADER COMBOS
 
-  Ctrl+\ then...    Action
+  Ctrl+Space then...    Action
   ──────────────    ──────────────────────────
   |                 Split right
   -                 Split down
